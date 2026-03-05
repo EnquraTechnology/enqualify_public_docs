@@ -14,5 +14,5 @@ theme:
 
 nav:
   - Ana Sayfa: index.md
-  - Dokümanlar: 
-      - docs/
+  - Dokümanlar:
+      - ... | docs/*.md
