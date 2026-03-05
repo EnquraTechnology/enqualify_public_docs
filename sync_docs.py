@@ -1,36 +1,39 @@
-name: Confluence to GitHub Sync
+import os
+import requests
+from markdownify import markdownify as md
 
-on:
-  schedule:
-    - cron: '0 * * * *' # Her saat başı otomatik çalışır
-  workflow_dispatch: # İstediğimiz an manuel çalıştırmak için buton ekler
+# Yapılandırma
+CONFLUENCE_URL = os.environ.get("CONFLUENCE_URL", "https://enqura.atlassian.net")
+EMAIL = os.environ.get("CONFLUENCE_EMAIL")
+API_TOKEN = os.environ.get("CONFLUENCE_API_TOKEN")
+SPACE_KEY = "EDP"
+LABEL = "customer-visible"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+def get_pages_by_label():
+    cql = f'space = "{SPACE_KEY}" AND label = "{LABEL}"'
+    url = f"{CONFLUENCE_URL}/wiki/rest/api/content/search"
+    auth = (EMAIL, API_TOKEN)
+    params = {'cql': cql, 'expand': 'body.storage'}
+    
+    response = requests.get(url, auth=auth, params=params)
+    response.raise_for_status()
+    return response.json()['results']
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+def sync():
+    pages = get_pages_by_label()
+    if not os.path.exists('docs'):
+        os.makedirs('docs')
 
-      - name: Install Dependencies
-        run: pip install requests markdownify
+    for page in pages:
+        title = page['title'].replace("/", "-")
+        html_content = page['body']['storage']['value']
+        markdown_content = md(html_content)
+        
+        file_path = f"docs/{title}.md"
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(f"# {page['title']}\n\n")
+            f.write(markdown_content)
+        print(f"Senkronize edildi: {title}")
 
-      - name: Run Sync Script
-        env:
-          CONFLUENCE_URL: ${{ secrets.CONFLUENCE_URL }}
-          CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
-          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
-        run: python sync_docs.py
-
-      - name: Commit and Push
-        run: |
-          git config --global user.name "DocSyncBot"
-          git config --global user.email "bot@github.com"
-          git add docs/
-          git commit -m "Automated doc update: $(date)" || exit 0
-          git push
+if __name__ == "__main__":
+    sync()
