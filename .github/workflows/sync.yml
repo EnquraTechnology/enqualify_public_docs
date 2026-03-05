@@ -32,5 +32,15 @@ jobs:
           CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
         run: python sync_docs.py
 
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "DocSyncBot"
+          git config --global user.email "bot@github.com"
+          git add .
+          git commit -m "Automated doc update: $(date)" || exit 0
+          git push origin main --force
+
       - name: Build and Deploy Site
-        run: mkdocs gh-deploy --force
+        run: |
+          mkdocs build
+          mkdocs gh-deploy --force
