@@ -1,9 +1,19 @@
-site_name: Enqualify Public Docs
+site_name: Enqualify Ürün Dokümantasyonu
 site_url: https://enquratechnology.github.io/enqualify_public_docs/
 use_directory_urls: false
 
 theme:
   name: material
+  palette:
+    primary: indigo
+    accent: indigo
 
-nav:
-  - Ana Sayfa: index.md
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
