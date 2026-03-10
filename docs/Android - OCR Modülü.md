@@ -99,6 +99,8 @@ Log.i(tag, "${object {}.javaClass.enclosingMethod?.name}")
 }
 }
 
+IDDocFailed() callbacki üzerinden yakalanacak LuminosityFailed hatası iş kesici bir hata değildir.Sadece parlaklığın uygun olmadığını belirtir.Bu hata geldiğinde akış kesilmemelidir.İstenirse eğer parlaklık ile alakalı bir uyarı gösterilebilir.
+
 ### 4. EnQualifyOCR'ın Initialize Edilmesi
 
 OCR işlemlerine başlamadan önce `EnQualifyOCR.initialize()` çağrılmalıdır. Initialize edilmeden başka bir işlem yapılmaya çalışılırsa SDK çalışmaz.
@@ -169,10 +171,10 @@ OCR İşlemleri
 | --- | --- |
 | `addFragment(fragment)` | Mevcut fragment üzerine yeni bir fragment ekler |
 | `replaceFragment(fragment)` | Mevcut fragment'i yenisiyle değiştirir |
-| `iDDocTypeCheckStart(isFront: Boolean = true)` | Kimlik tipi tanıma işlemini başlatır |
+| `iDDocTypeCheckStart(isFront: Boolean = true)` | Kimlik tipi tanıma işlemini başlatır.İçine aldığı parametre ile hangi yüz tanınması gerektiği belirtilir. |
 | `hologramCheckStart()` | Hologram tespit işlemini başlatır |
-| `iDDocFrontStart(withVisualAnalysis: Boolean = false)` | Kimlik ön yüzü taramasını başlatır |
-| `iDDocBackStart(withVisualAnalysis: Boolean = false)` | Kimlik arka yüzü taramasını başlatır |
+| `iDDocFrontStart(withVisualAnalysis: Boolean = false)` | Kimlik ön yüzü taramasını başlatır.Parametre true olarak setlenirse görsel ögelerin analizi de yapılır. |
+| `iDDocBackStart(withVisualAnalysis: Boolean = false)` | Kimlik arka yüzü taramasını başlatır.Parametre true olarak setlenirse görsel ögelerin analizi de yapılır. |
 | `iDDocComplete()` | Tüm kimlik okuma adımlarının tamamlandığını SDK'ya bildirir |
 | `addIntegration(integrationModel)` | Entegrasyon verisi ekler |
 | `closeSession(isFinished: Boolean)` | Session'ı kapatır |
@@ -184,7 +186,7 @@ OCR İşlemleri
 
 wide760enQualifyOCR.iDDocTypeCheckStart(isFront = true)
 
-İşlem tamamlandığında `IDDocTypeCheckVerified` tetiklenir. `isFront` parametresi, sürecin `iDDocFrontStart` mı yoksa `iDDocBackStart` mı ile devam edeceğini belirler:
+İşlem tamamlandığında `IDDocTypeCheckVerified` tetiklenir. `isFront` parametresi, kimliğin hangi yüzünün tanımlanacağını belirtir.
 
 wide760override fun IDDocTypeCheckVerified(isFront: Boolean) {
 Log.i(tag, "${object {}.javaClass.enclosingMethod?.name}")
