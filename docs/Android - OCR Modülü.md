@@ -179,6 +179,7 @@ OCR İşlemleri
 | `addIntegration(integrationModel)` | Entegrasyon verisi ekler |
 | `closeSession(isFinished: Boolean)` | Session'ı kapatır |
 | `clear()` | SDK'yı temizler |
+| `getSessionUId()` | Mevcut session’a ait UId’yi döner. |
 
 ---
 
